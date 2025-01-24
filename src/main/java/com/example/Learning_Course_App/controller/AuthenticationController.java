@@ -1,9 +1,7 @@
 package com.example.Learning_Course_App.controller;
 
 
-import com.example.Learning_Course_App.dto.request.LoginUserRequest;
-import com.example.Learning_Course_App.dto.request.RegisterUserRequest;
-import com.example.Learning_Course_App.dto.request.VerifyUserRequest;
+import com.example.Learning_Course_App.dto.request.*;
 import com.example.Learning_Course_App.dto.response.LoginResponse;
 import com.example.Learning_Course_App.model.User;
 import com.example.Learning_Course_App.service.AuthenticationService;
@@ -61,6 +59,26 @@ public class AuthenticationController {
         try {
             authenticationService.resendVerificationCode(email);
             return ResponseEntity.ok("Verification code sent");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        try {
+            authenticationService.forgotPassword(forgotPasswordRequest);
+            return ResponseEntity.ok("Verification code sent to your email.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        try {
+            authenticationService.resetPassword(resetPasswordRequest);
+            return ResponseEntity.ok("Password reset successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

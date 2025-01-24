@@ -1,8 +1,6 @@
 package com.example.Learning_Course_App.service;
 
-import com.example.Learning_Course_App.dto.request.LoginUserRequest;
-import com.example.Learning_Course_App.dto.request.RegisterUserRequest;
-import com.example.Learning_Course_App.dto.request.VerifyUserRequest;
+import com.example.Learning_Course_App.dto.request.*;
 import com.example.Learning_Course_App.model.User;
 import com.example.Learning_Course_App.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -136,6 +134,41 @@ public class AuthenticationService {
             e.printStackTrace();
         }
     }
+
+    public void forgotPassword(ForgotPasswordRequest input) {
+        User user = userRepository.findByEmail(input.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Please verify your account.");
+        }
+
+        try {
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+            User savedUser = userRepository.save(user);
+            sendVerificationEmail(savedUser);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void resetPassword(ResetPasswordRequest input) {
+        User user = userRepository.findByEmail(input.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Please verify your account.");
+        }
+
+        try {
+            user.setPassword(passwordEncoder.encode(input.getNewPassword()));
+            userRepository.save(user);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private String generateVerificationCode() {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
