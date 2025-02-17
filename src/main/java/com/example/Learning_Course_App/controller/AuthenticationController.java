@@ -3,9 +3,9 @@ package com.example.Learning_Course_App.controller;
 
 import com.example.Learning_Course_App.dto.request.*;
 import com.example.Learning_Course_App.dto.response.LoginResponse;
-import com.example.Learning_Course_App.model.User;
-import com.example.Learning_Course_App.service.AuthenticationService;
-import com.example.Learning_Course_App.service.JwtService;
+import com.example.Learning_Course_App.entity.User;
+import com.example.Learning_Course_App.service.Impl.AuthenticationService;
+import com.example.Learning_Course_App.service.Impl.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
