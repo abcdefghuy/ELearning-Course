@@ -1,7 +1,7 @@
 package com.example.Learning_Course_App.config;
 
 
-import com.example.Learning_Course_App.repository.UserRepository;
+import com.example.Learning_Course_App.repository.IUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,14 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class ApplicationConfiguration {
-    private final UserRepository userRepository;
-    public ApplicationConfiguration(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private final IUserRepository IUserRepository;
+    public ApplicationConfiguration(IUserRepository IUserRepository) {
+        this.IUserRepository = IUserRepository;
     }
 
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> IUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean

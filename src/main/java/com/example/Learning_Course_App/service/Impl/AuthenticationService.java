@@ -1,9 +1,10 @@
-package com.example.Learning_Course_App.service;
+package com.example.Learning_Course_App.service.Impl;
 
 import com.example.Learning_Course_App.dto.request.*;
-import com.example.Learning_Course_App.model.User;
-import com.example.Learning_Course_App.repository.UserRepository;
+import com.example.Learning_Course_App.entity.User;
+import com.example.Learning_Course_App.repository.IUserRepository;
 import jakarta.mail.MessagingException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,19 +16,19 @@ import java.util.Random;
 
 @Service
 public class AuthenticationService {
-    private final UserRepository userRepository;
+    private final IUserRepository IUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final com.example.Learning_Course_App.service.EmailService emailService;
+    private final EmailService emailService;
 
     public AuthenticationService(
-            UserRepository userRepository,
+            IUserRepository IUserRepository,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder,
-            com.example.Learning_Course_App.service.EmailService emailService
+            EmailService emailService
     ) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.IUserRepository = IUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
@@ -43,7 +44,7 @@ public class AuthenticationService {
             user.setEnabled(false);
 
             // Lưu người dùng vào cơ sở dữ liệu
-            User savedUser = userRepository.save(user);
+            User savedUser = IUserRepository.save(user);
 
             // Gửi email xác nhận nếu lưu thành công
             sendVerificationEmail(savedUser);
@@ -59,7 +60,7 @@ public class AuthenticationService {
     }
 
     public User authenticate(LoginUserRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
+        User user = IUserRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isEnabled()) {
@@ -76,7 +77,7 @@ public class AuthenticationService {
     }
 
     public void verifyUser(VerifyUserRequest input) {
-        Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
+        Optional<User> optionalUser = IUserRepository.findByEmail(input.getEmail());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
@@ -86,7 +87,7 @@ public class AuthenticationService {
                 user.setEnabled(true);
                 user.setVerificationCode(null);
                 user.setVerificationCodeExpiresAt(null);
-                userRepository.save(user);
+                IUserRepository.save(user);
             } else {
                 throw new RuntimeException("Invalid verification code");
             }
@@ -96,7 +97,7 @@ public class AuthenticationService {
     }
 
     public void resendVerificationCode(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = IUserRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.isEnabled()) {
@@ -105,7 +106,7 @@ public class AuthenticationService {
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
             sendVerificationEmail(user);
-            userRepository.save(user);
+            IUserRepository.save(user);
         } else {
             throw new RuntimeException("User not found");
         }
@@ -136,7 +137,7 @@ public class AuthenticationService {
     }
 
     public void forgotPassword(ForgotPasswordRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
+        User user = IUserRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isEnabled()) {
@@ -146,7 +147,7 @@ public class AuthenticationService {
         try {
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-            User savedUser = userRepository.save(user);
+            User savedUser = IUserRepository.save(user);
             sendVerificationEmail(savedUser);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -154,7 +155,7 @@ public class AuthenticationService {
     }
 
     public void resetPassword(ResetPasswordRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
+        User user = IUserRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isEnabled()) {
@@ -163,7 +164,7 @@ public class AuthenticationService {
 
         try {
             user.setPassword(passwordEncoder.encode(input.getNewPassword()));
-            userRepository.save(user);
+            IUserRepository.save(user);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }

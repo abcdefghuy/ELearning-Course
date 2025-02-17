@@ -1,6 +1,6 @@
 package com.example.Learning_Course_App.config;
 
-import com.example.Learning_Course_App.service.JwtService;
+import com.example.Learning_Course_App.service.Impl.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

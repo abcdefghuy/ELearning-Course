@@ -1,4 +1,4 @@
-package com.example.Learning_Course_App.service;
+package com.example.Learning_Course_App.service.Impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
