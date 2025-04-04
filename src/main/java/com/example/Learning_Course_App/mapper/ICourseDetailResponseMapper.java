@@ -13,20 +13,18 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ICourseDetailResponseMapper {
-    ICourseDetailResponseMapper INSTANCE =  Mappers.getMapper(ICourseDetailResponseMapper.class);
-    @Mapping(source = "course.courseDetails.coursePrice", target = "coursePrice")
-    @Mapping(source = "course.courseDetails.courseDescription", target = "courseDescription")
-    @Mapping(source = "course.courseDetails.duration", target = "duration")
-    @Mapping(source = "course.courseDetails.createdAt", target = "createdAt")
-    @Mapping(source = "course.courseDetails.level", target = "level")
-    @Mapping(source = "course.courseDetails.rating", target = "rating")
-    @Mapping(source = "course.courseDetails.studentQuantity", target = "studentQuantity")
-    @Mapping(target = "categoryNames", expression = "java(mapCategoryNames(course))")
-    @Mapping(source = "course.id",target = "courseId")
-    CourseDetailResponse toDto(Course course);
-
-    default List<String> mapCategoryNames(Course course) {
-        return course.getCategories() != null ?
-                course.getCategories().stream().map(c -> c.getCategoryName()).collect(Collectors.toList()) : null;
-    }
+//    ICourseDetailResponseMapper INSTANCE =  Mappers.getMapper(ICourseDetailResponseMapper.class);
+//    @Mapping(source = "course.courseDetail.coursePrice", target = "coursePrice")
+//    @Mapping(source = "course.courseDetail.courseDescription", target = "courseDescription")
+//    @Mapping(source = "course.courseDetail.duration", target = "duration")
+//    @Mapping(source = "course.courseDetail.createdAt", target = "createdAt")
+//    @Mapping(source = "course.courseDetail.rating", target = "rating")
+//    @Mapping(target = "categoryNames", expression = "java(mapCategoryNames(course))")
+//    @Mapping(source = "course.id",target = "courseId")
+//    CourseDetailResponse toDto(Course course);
+//
+//    default List<String> mapCategoryNames(Course course) {
+//        return course.getCategories() != null ?
+//                course.getCategories().stream().map(c -> c.getCategory().getCategoryName()).collect(Collectors.toList()) : null;
+//    }
 }

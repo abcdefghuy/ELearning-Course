@@ -28,14 +28,21 @@ public class Course {
     @Column(name="enabled", nullable=false)
     private Boolean enabled;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
-    @JoinTable(
-            name = "course_category",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<CourseCategory> categories;
 
-    @OneToOne(mappedBy = "course", cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
-    private CourseDetail courseDetails;
+    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
+    private CourseDetail details;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Lesson> lessons;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Bookmark> bookmarks;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 }

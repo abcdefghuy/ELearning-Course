@@ -54,7 +54,7 @@ public class AuthenticationService {
             User user = new User();
             user.setEmail(input.getEmail());
             user.setPassword(encodedPassword);
-            user.setRole(Role.STUDENT);
+            user.setRole("ROLE_STUDENT");
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             user.setEnabled(false);
