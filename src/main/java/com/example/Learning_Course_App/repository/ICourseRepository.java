@@ -15,8 +15,7 @@ import java.util.List;
 public interface ICourseRepository extends JpaRepository<Course, Integer> {
     @Query("SELECT c FROM Course c JOIN c.categories cat WHERE cat.id = :categoryId")
     List<Course> findByCategoryId(@Param("categoryId") Long categoryId);
-    @Query("SELECT c FROM Course c WHERE c.courseDetails.createdAt >= :sevenDaysAgo ORDER BY c.courseDetails.createdAt DESC")
+    @Query("SELECT c FROM Course c WHERE c.details.createdAt >= :sevenDaysAgo ORDER BY c.details.createdAt DESC")
     List<Course> findTop10ByCreatedAt(LocalDate sevenDaysAgo, Pageable pageable);
-    @Query("SELECT c FROM Course c ORDER BY c.courseDetails.studentQuantity DESC")
-    List<Course> findTop10BySoldQuantity(Pageable pageable);
+
 }

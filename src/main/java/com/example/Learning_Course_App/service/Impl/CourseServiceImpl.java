@@ -22,27 +22,30 @@ public class CourseServiceImpl implements ICourseService {
     }
     @Override
     public List<CourseDetailResponse> getCourseByCategory(Long categoryId) {
-        return courseRepository.findByCategoryId(categoryId).stream()
-                .map(courseDetailResponseMapper::toDto)
-                .collect(Collectors.toList());
+//        return courseRepository.findByCategoryId(categoryId).stream()
+//                .map(courseDetailResponseMapper::toDto)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public List<CourseDetailResponse> getTop10BestSellingProducts() {
-        Pageable pageable = PageRequest.of(0, 10);
-        return courseRepository.findTop10BySoldQuantity(pageable)
-                .stream()
-                .map(courseDetailResponseMapper::toDto)
-                .collect(Collectors.toList());
+//        Pageable pageable = PageRequest.of(0, 10);
+//        return courseRepository.findTop10BySoldQuantity(pageable)
+//                .stream()
+//                .map(courseDetailResponseMapper::toDto)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public List<CourseDetailResponse> getTop10NewProducts() {
-        LocalDate sevenDaysAgo = LocalDate.now().minusDays(7);
-        Pageable pageable = PageRequest.of(0, 10);
-        return courseRepository.findTop10ByCreatedAt(sevenDaysAgo, pageable)
-                .stream()
-                .map(courseDetailResponseMapper::toDto)
-                .collect(Collectors.toList());
+//        LocalDate sevenDaysAgo = LocalDate.now().minusDays(7);
+//        Pageable pageable = PageRequest.of(0, 10);
+//        return courseRepository.findTop10ByCreatedAt(sevenDaysAgo, pageable)
+//                .stream()
+//                .map(courseDetailResponseMapper::toDto)
+//                .collect(Collectors.toList());
+        return null;
     }
 }

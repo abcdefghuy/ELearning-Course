@@ -16,32 +16,20 @@ import java.util.Date;
 public class CourseDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
-
+    private Integer courseDetailsId;
+    @Column(name = "course_img", nullable = false)
+    private String courseImg;
     @Column(name = "course_price", nullable = false)
-    private Double coursePrice;
-
-    @Column(name = "course_description", length = 1000)
+    private double coursePrice;
+    @Column(name = "course_description", nullable = false)
     private String courseDescription;
-
-    @Column(name = "duration")
-    private Integer duration; // Số giờ
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt = new Date(); // Mặc định là ngày hiện tại
-
-    @Column(name = "level", length = 20)
-    @Enumerated(EnumType.STRING)
-    private CourseLevel level;
-
-    @Column(name = "rating")
-    private Double rating = 0.00;
-
-    @Column(name = "student_quantity", columnDefinition = "INT DEFAULT 0")
-    private Integer studentQuantity = 0;
+    @Column(name="created_at", nullable = false)
+    private Date createdAt = new Date();
+    @Column(name="update_at", nullable = false)
+    private Date updateAt = new Date();
+    @Column(name="isBestSeller")
+    private boolean isBestSeller;
+    @OneToOne
+    @JoinColumn(name = "course_id", nullable = false, unique = true)
+    private Course course;
 }

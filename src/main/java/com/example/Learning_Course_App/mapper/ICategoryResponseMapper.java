@@ -9,6 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface ICategoryResponseMapper {
     ICategoryResponseMapper INSTANCE =  Mappers.getMapper(ICategoryResponseMapper.class);
-    @Mapping(source = "id", target = "categoryId")
+    @Mapping(source = "categoryId", target = "categoryId")
     CategoryResponse toDto(Category category);
 }

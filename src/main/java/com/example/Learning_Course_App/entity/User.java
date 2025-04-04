@@ -4,6 +4,7 @@ import com.example.Learning_Course_App.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "USER")
 @Getter
 @Setter
 public class User implements UserDetails {
@@ -23,32 +24,46 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name="email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password",nullable = false)
     private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
+    @Column(name="role",nullable = false)
+    private String role;
+    @Column(name = "full_name")
     private String fullName;
-
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at",nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "update_at",nullable = false)
     private LocalDateTime updatedAt;
-
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
+    // Relationships
+    // Quan hệ
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Enrollment> enrollments;
 
-    public User(String email, String password, Role role) {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Bookmark> bookmarks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<Progress> progresses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<AssignmentSubmission> submissions;
+
+    public User(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -64,7 +79,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_" + role.name());
+        return List.of(new SimpleGrantedAuthority(this.role));
     }
 
     @Override
