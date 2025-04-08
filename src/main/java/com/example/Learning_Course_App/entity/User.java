@@ -30,7 +30,7 @@ public class User implements UserDetails {
     @Column(name = "password",nullable = false)
     private String password;
     @Column(name="role",nullable = false)
-    private String role;
+    private Role role;
     @Column(name = "full_name")
     private String fullName;
     @Column(name = "phone_number")
@@ -63,7 +63,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<AssignmentSubmission> submissions;
 
-    public User(String email, String password, String role) {
+    public User(String email, String password, Role role) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -79,7 +79,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
