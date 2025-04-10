@@ -15,8 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name="course")
-@Getter
-@Setter
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +24,7 @@ public class Course {
     private String courseName;
 
     @Column(name="enabled", nullable=false)
-    private Boolean enabled;
+    private boolean enabled;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseCategory> categories;
