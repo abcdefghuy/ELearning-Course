@@ -16,22 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 public class CategoryController {
     private final ICategoryService categoryService;
-    private final ICourseService courseService;
-    public CategoryController(ICategoryService categoryService, ICourseService courseService) {
+    public CategoryController(ICategoryService categoryService) {
         this.categoryService = categoryService;
-        this.courseService = courseService;
     }
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         List<CategoryResponse> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
-    @GetMapping("/{categoryId}/courses")
-    public ResponseEntity<List<CourseDetailResponse>> getCourseByCategory(@PathVariable Long categoryId) {
-        List<CourseDetailResponse> products = courseService.getCourseByCategory(categoryId);
-        return ResponseEntity.ok(products);
-    }
+
 }

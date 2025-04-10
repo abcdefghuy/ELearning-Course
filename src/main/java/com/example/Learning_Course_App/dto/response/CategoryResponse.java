@@ -1,15 +1,12 @@
 package com.example.Learning_Course_App.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryResponse {
-    private Long categoryId;
+    private int categoryId;
     private String categoryName;
 }

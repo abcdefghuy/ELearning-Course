@@ -40,12 +40,15 @@ public enum ErrorCode {
     OTP_STILL_VALID(4005, "OTP is still valid. Please wait until it expires."),
     INVALID_OTP(4007, "Invalid OTP. Please check the code and try again."),
     EXPIRED_OTP(4008, "OTP has expired. Please request a new OTP."),
+    CATEGORY_NOT_FOUND(4009, "Category not found"),
+    COURSE_NOT_FOUND(4010, "Course not found"),
 
     // Server Errors (5xxx)
     INTERNAL_SERVER_ERROR(5000, "An unexpected error occurred. Please try again later."),
     USER_REGISTRATION_FAILED(5001, "User registration failed"),
     USER_VERIFICATION_FAILED(5002, "User verification failed"),
-    OTP_RESEND_FAILED(5003, "Failed to resend OTP");
+    OTP_RESEND_FAILED(5003, "Failed to resend OTP"),
+    REDIS_ERROR(5004, "Redis error occurred");
 
     private final int code;
     private final String message;
