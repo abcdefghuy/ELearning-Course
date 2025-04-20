@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CategoryResponse {
-    private int categoryId;
+    private long categoryId;
     private String categoryName;
 }

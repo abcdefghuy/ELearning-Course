@@ -3,19 +3,20 @@ package com.example.Learning_Course_App.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "review")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "rating")
     @Min(1)
@@ -25,6 +26,8 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String feedback;
 
+    @Column(name="update_at", nullable = false)
+    private Date update_at;
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;

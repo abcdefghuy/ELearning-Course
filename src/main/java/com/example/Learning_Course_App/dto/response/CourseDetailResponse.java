@@ -11,20 +11,20 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CourseDetailResponse {
-    private Long courseId;
+    private long courseId;
     private String courseName;
     private boolean enabled;
     private Double coursePrice;
     private String courseImg;
     private String courseDescription;
-    private Integer duration;
+    private int duration;
     private Date createdAt;
     private Date updateAt;
-    private CourseLevel level;
+    private String level;
     private Double rating;
-    private int reviewCount;
     private int lessonCount;
-    private Integer studentQuantity;
+    private int reviewCount;
+    private int studentQuantity;
     private List<String> categoryNames;
     private boolean isBestSeller;
     private boolean isBookmarked;

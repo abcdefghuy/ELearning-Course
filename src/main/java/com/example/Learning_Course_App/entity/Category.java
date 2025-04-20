@@ -6,7 +6,6 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -16,7 +15,7 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int categoryId;
+    private long categoryId;
     @Column(name = "category_name")
     private String categoryName;
 

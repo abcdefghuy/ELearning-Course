@@ -1,21 +1,21 @@
 package com.example.Learning_Course_App.entity;
 
+import com.example.Learning_Course_App.enumeration.StatusSubmission;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "assignment_submission")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssignmentSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private long id;
 
     @Column(name = "submission_text",columnDefinition = "TEXT")
     private String submissionText;
