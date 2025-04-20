@@ -1,9 +1,7 @@
 package com.example.Learning_Course_App.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,13 +9,14 @@ import java.util.List;
 
 @Entity
 @Table(name = "lesson")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(name = "lesson_title", nullable = false)
     private String lessonTitle;
     @Column(name = "lesson_description", nullable = false)
@@ -25,13 +24,13 @@ public class Lesson {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt = new Date();
     @Column(name= "duration", nullable = false)
-    private Integer duration;
+    private int duration;
     @Column(name = "update_at", nullable = false)
     private Date updateAt = new Date();
-    @Column(name = "lecture_videoUrl", nullable = false)
+    @Column(name = "lesson_videoUrl", nullable = false)
     private String lectureVideoURL;
-    @Column(name = "lecture_order", nullable = false)
-    private int lectureOrder;
+    @Column(name = "lesson_order", nullable = false)
+    private int lessonOrder;
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;

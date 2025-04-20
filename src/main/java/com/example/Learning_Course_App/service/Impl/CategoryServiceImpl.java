@@ -40,6 +40,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public List<CategoryResponse> getAllCategories() {
+        redisService.delete("categories");
         String cacheKey = "categories";
         if(redisService.exists(cacheKey)) {
             List<CategoryResponse> cachedCategories = redisService.getList(cacheKey, CategoryResponse.class);

@@ -1,10 +1,16 @@
 package com.example.Learning_Course_App.controller;
 
+import com.example.Learning_Course_App.dto.response.ContinueCourseResponse;
 import com.example.Learning_Course_App.dto.response.CourseDetailResponse;
+import com.example.Learning_Course_App.dto.response.CourseResponse;
+import com.example.Learning_Course_App.dto.response.PagedResponse;
+import com.example.Learning_Course_App.entity.User;
 import com.example.Learning_Course_App.service.ICourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,36 +26,52 @@ public class CourseController {
     }
     // API: Lấy 10 sản phẩm bán chạy nhất
     @GetMapping("/top-selling")
-    public ResponseEntity<?> getTop10BestSellingProducts(@RequestParam(required = false) Long userId) {
-        Page<CourseDetailResponse> courses = courseService.getTop10BestSellingProducts(userId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("courses", courses.getContent());
-        response.put("totalPages", courses.getTotalPages());
-        response.put("currentPage", courses.getNumber());
-        response.put("pageSize", courses.getSize());
-        response.put("totalElements", courses.getTotalElements());
-        response.put("last", courses.isLast());
+    public ResponseEntity<?> getTop10BestSellingProducts(@AuthenticationPrincipal User user) {
+        Long userId = user != null ? user.getId() : null;
+        Page<CourseResponse> courses = courseService.getTop10BestSellingProducts(userId);
+        PagedResponse<CourseResponse> response = new PagedResponse<>(
+                courses.getContent(), courses.getNumber(), courses.getSize(),
+                courses.getTotalElements(), courses.getTotalPages(), courses.isLast()
+        );
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{categoryId}/courses")
-    public ResponseEntity<List<CourseDetailResponse>> getCourseByCategory(@PathVariable Long categoryId) {
-        List<CourseDetailResponse> products = courseService.getCourseByCategory(categoryId);
-        return ResponseEntity.ok(products);
-    }
-    @GetMapping("/all-courses")
-    public ResponseEntity<Map<String, Object>> getAllCourses(
+    public ResponseEntity<?> getCourseByCategory(
+            @PathVariable Long categoryId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long userId) {
-
-        Page<CourseDetailResponse> allCourses = courseService.getAllCourses(PageRequest.of(page, size), userId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("courses", allCourses.getContent());
-        response.put("totalPages", allCourses.getTotalPages());
-        response.put("currentPage", allCourses.getNumber());
-        response.put("pageSize", allCourses.getSize());
-        response.put("totalElements", allCourses.getTotalElements());
-        response.put("last", allCourses.isLast());
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String userIds = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = Long.parseLong(userIds);
+        Page<CourseResponse> courses = courseService.getCourseByCategory(categoryId, page, size, userId);
+        PagedResponse<CourseResponse> response = new PagedResponse<>(
+                courses.getContent(),
+                courses.getNumber(),
+                courses.getSize(),
+                courses.getTotalElements(),
+                courses.getTotalPages(),
+                courses.isLast()
+        );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all-courses")
+    public ResponseEntity<?> getAllCourses(@AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long userId = user != null ? user.getId() : null;
+        Page<CourseResponse> allCourses = courseService.getAllCourses(PageRequest.of(page, size), userId);
+        PagedResponse<CourseResponse> response = new PagedResponse<>(
+                allCourses.getContent(),   allCourses.getNumber(), allCourses.getSize(),
+                allCourses.getTotalElements(), allCourses.getTotalPages(),   allCourses.isLast()
+        );
+        return ResponseEntity.ok(response);
+    }
+    // API: Lấy thông tin chi tiết của một sản phẩm
+    @GetMapping("/{courseId}")
+    public ResponseEntity<?> getCourseDetail(@PathVariable Long courseId, @RequestParam(required = false) Long userId) {
+        CourseDetailResponse courseDetail = courseService.getDetailCourse(courseId, userId);
+        return ResponseEntity.ok(courseDetail);
     }
 
 
@@ -57,5 +79,42 @@ public class CourseController {
     @GetMapping("/newest")
     public ResponseEntity<List<CourseDetailResponse>> getTop10NewProducts() {
         return ResponseEntity.ok(courseService.getTop10NewProducts());
+    }
+    @GetMapping("/continue/latest")
+    public ResponseEntity<?> getLatestContinueCourse(@AuthenticationPrincipal User user) {
+        Long userId = user != null ? user.getId() : null;
+        ContinueCourseResponse course = courseService.getLatestContinueCourse(userId);
+        if (course == null) {
+            return ResponseEntity.noContent().build(); // 204
+        }
+        return ResponseEntity.ok(course);
+    }
+    @GetMapping("/continue")
+    public ResponseEntity<?> getContinueCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User user
+    ) {
+        Long userId = user != null ? user.getId() : null;
+        Page<ContinueCourseResponse> courses = courseService.getAllContinueCourses(userId, PageRequest.of(page, size));
+        PagedResponse<ContinueCourseResponse> response = new PagedResponse<>(
+                courses.getContent(), courses.getNumber(), courses.getSize(),
+                courses.getTotalElements(), courses.getTotalPages(), courses.isLast()
+        );
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/completed")
+    public ResponseEntity<?> getContinueCoursesComplete(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User user
+    ) {
+        Long userId = user != null ? user.getId() : null;
+        Page<ContinueCourseResponse> courses = courseService.getAllContinueCoursesCompleted(userId, PageRequest.of(page, size));
+        PagedResponse<ContinueCourseResponse> response = new PagedResponse<>(
+                courses.getContent(), courses.getNumber(), courses.getSize(),
+                courses.getTotalElements(), courses.getTotalPages(), courses.isLast()
+        );
+        return ResponseEntity.ok(response);
     }
 }

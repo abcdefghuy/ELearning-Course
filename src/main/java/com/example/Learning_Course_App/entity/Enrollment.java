@@ -1,19 +1,22 @@
 package com.example.Learning_Course_App.entity;
 
+import com.example.Learning_Course_App.enumeration.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "enrollment")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+    @Column(name="status", nullable=false)
+    @Enumerated(EnumType.STRING)
+    private Status courseStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

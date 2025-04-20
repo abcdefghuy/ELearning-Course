@@ -1,9 +1,8 @@
 package com.example.Learning_Course_App.entity;
 
+import com.example.Learning_Course_App.enumeration.LessonStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,17 +10,18 @@ import java.util.Date;
 @Table(name = "progress")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class Progress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+    @Column(name = "lessonStatus")
     @Enumerated(EnumType.STRING)
-    private Status status; // Enum: Completed, InProgress
+    private LessonStatus status;
+    private Date createdAt ;
 
-    private Date createdAt = new Date();
-
-    private Date updateAt = new Date();
+    private Date updateAt ;
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")

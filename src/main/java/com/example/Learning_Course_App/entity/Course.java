@@ -1,6 +1,7 @@
 package com.example.Learning_Course_App.entity;
 
 import com.example.Learning_Course_App.enumeration.CourseStatus;
+import com.example.Learning_Course_App.enumeration.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,21 +11,24 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name="course")
+@Getter
+@Setter
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name="course_name", nullable=false)
     private String courseName;
 
     @Column(name="enabled", nullable=false)
     private boolean enabled;
+
+
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseCategory> categories;

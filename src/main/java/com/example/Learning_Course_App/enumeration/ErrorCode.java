@@ -16,6 +16,8 @@ public enum ErrorCode {
     SUCCESS_ACCOUNT_VERIFIED(1005, "Account has already been verified successfully"),
     SUCCESS_OTP_SENT(1006, "OTP has been sent to your email address"),
     SUCCESS_PASSWORD_RESET(1007, "Password has been reset successfully"),
+    BOOKMARK_ADDED_SUCCESSFULLY(1008, "Bookmark added successfully"),
+    REVIEW_ADDED_SUCCESSFULLY(1009, "Review added successfully"),
 
     // Authentication & Authorization Errors (2xxx)
     INVALID_CREDENTIALS(2000, "Invalid email or password"),
@@ -42,6 +44,11 @@ public enum ErrorCode {
     EXPIRED_OTP(4008, "OTP has expired. Please request a new OTP."),
     CATEGORY_NOT_FOUND(4009, "Category not found"),
     COURSE_NOT_FOUND(4010, "Course not found"),
+    BOOKMARK_ALREADY_EXISTS(4011, "Bookmark already exists"),
+    INVALID_REQUEST(4012, "User ID and Course ID are required"),
+    BOOKMARK_NOT_FOUND(4013, "Bookmark not found"),
+    REVIEW_NOT_FOUND(4014, "Review not found"),
+
 
     // Server Errors (5xxx)
     INTERNAL_SERVER_ERROR(5000, "An unexpected error occurred. Please try again later."),
