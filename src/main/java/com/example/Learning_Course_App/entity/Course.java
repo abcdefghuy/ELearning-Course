@@ -28,8 +28,6 @@ public class Course {
     @Column(name="enabled", nullable=false)
     private boolean enabled;
 
-
-
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseCategory> categories;
 
@@ -42,8 +40,8 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Bookmark> bookmarks;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookmarkedCourse> bookmarkedCourses;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Review> reviews;

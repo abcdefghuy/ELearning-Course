@@ -1,10 +1,12 @@
 package com.example.Learning_Course_App.controller;
 
+import com.example.Learning_Course_App.dto.response.ApiResponse;
 import com.example.Learning_Course_App.dto.response.CategoryResponse;
 import com.example.Learning_Course_App.dto.response.CourseDetailResponse;
 import com.example.Learning_Course_App.entity.Category;
 import com.example.Learning_Course_App.entity.Course;
 import com.example.Learning_Course_App.entity.User;
+import com.example.Learning_Course_App.enumeration.ErrorCode;
 import com.example.Learning_Course_App.service.ICategoryService;
 import com.example.Learning_Course_App.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +27,11 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAllCategories(@AuthenticationPrincipal User person) {
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories(@AuthenticationPrincipal User person) {
         if (person == null) {
-            System.out.println("User is not authenticated");
             return ResponseEntity.status(403).build(); // Forbidden
         }
-        System.out.println("User is authenticated: " + person.getId());
         List<CategoryResponse> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok(categories);
+        return ResponseEntity.ok(ApiResponse.success(ErrorCode.SUCCESS, categories));
     }
 }

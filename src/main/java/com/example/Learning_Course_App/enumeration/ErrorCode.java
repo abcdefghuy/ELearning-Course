@@ -18,6 +18,7 @@ public enum ErrorCode {
     SUCCESS_PASSWORD_RESET(1007, "Password has been reset successfully"),
     BOOKMARK_ADDED_SUCCESSFULLY(1008, "Bookmark added successfully"),
     REVIEW_ADDED_SUCCESSFULLY(1009, "Review added successfully"),
+    LESSON_PROGRESS_UPDATED(1010, "Lesson progress updated successfully"),
 
     // Authentication & Authorization Errors (2xxx)
     INVALID_CREDENTIALS(2000, "Invalid email or password"),
@@ -33,6 +34,7 @@ public enum ErrorCode {
     PASSWORD_LENGTH_INVALID(3003, "Password length must be between 8 and 30 characters."),
     PASSWORD_INVALID_FORMAT(3004, "Password must contain at least one letter, one number, and one special character."),
     INVALID_OTP_FORMAT(3006, "OTP must be 6 digits."),
+    INVALID_DATE_FORMAT(3007, "Invalid date format."),
 
     // Data Errors (4xxx)
     USER_NOT_FOUND(4000, "User not found"),

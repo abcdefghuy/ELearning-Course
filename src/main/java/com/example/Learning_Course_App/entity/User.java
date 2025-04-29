@@ -8,8 +8,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -18,6 +20,7 @@ import java.util.List;
 @Table(name = "USER")
 @Getter
 @Setter
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +40,10 @@ public class User implements UserDetails {
 
     @Column(name = "avatar_url")
     private String avatarUrl;
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
+    @Column(name = "gender")
+    private String gender;
 
     @Column(name = "created_at",nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -50,8 +57,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Bookmark> bookmarks;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Bookmark bookmarks;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;

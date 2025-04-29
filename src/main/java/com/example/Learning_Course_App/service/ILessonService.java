@@ -5,4 +5,6 @@ import org.springframework.data.domain.Page;
 
 public interface ILessonService {
     public Page<LessonResponse> getLessonsByCourse(Long courseId, Long userId, int page, int size);
+
+    void updateProgress(Long lessonId, Long userId);
 }

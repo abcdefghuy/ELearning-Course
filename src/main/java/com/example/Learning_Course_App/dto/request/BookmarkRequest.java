@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookmarkRequest {
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
     @NotNull(message = "Course ID is required")
     private Long courseId;
 }

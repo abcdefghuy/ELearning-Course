@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CourseMapper {
-    public CourseResponse toDTO(Course course) {
+    public CourseResponse toDTO(Course course, boolean isBookmarked) {
         return CourseResponse.builder()
                 .courseId(course.getId())
                 .courseName(course.getCourseName())
                 .enabled(course.isEnabled())
                 .coursePrice(course.getDetails().getCoursePrice())
                 .courseImg(course.getDetails().getCourseImg())
-                .isBookmarked(course.getDetails().isBestSeller())
+                .isBookmarked(isBookmarked)
                 .isBestSeller(course.getDetails().isBestSeller())
                 .build();
     }
