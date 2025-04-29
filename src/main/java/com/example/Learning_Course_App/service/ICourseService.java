@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 public interface ICourseService {
-    Page<CourseResponse> getCourseByCategory(Long categoryId, int page, int size, Long userId);
+    Page<CourseResponse> getCourseByCategory(String categoryName, int page, int size, Long userId);
 
     Page<CourseResponse> getTop10BestSellingProducts( Long userId);
 
@@ -23,4 +23,6 @@ public interface ICourseService {
     Page<ContinueCourseResponse> getAllContinueCourses(Long userId, PageRequest of);
 
     Page<ContinueCourseResponse> getAllContinueCoursesCompleted(Long userId, PageRequest of);
+
+    Page<CourseResponse> getCourseSearch(Long userId,String keyword, PageRequest of);
 }

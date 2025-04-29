@@ -2,26 +2,39 @@ package com.example.Learning_Course_App.service.Impl;
 
 import com.example.Learning_Course_App.dto.response.LessonResponse;
 import com.example.Learning_Course_App.entity.Lesson;
+import com.example.Learning_Course_App.entity.Progress;
+import com.example.Learning_Course_App.entity.User;
+import com.example.Learning_Course_App.enumeration.LessonStatus;
 import com.example.Learning_Course_App.mapper.LessonMapper;
+import com.example.Learning_Course_App.repository.ICourseRepository;
 import com.example.Learning_Course_App.repository.ILessonRepository;
+import com.example.Learning_Course_App.repository.IProgressRepository;
+import com.example.Learning_Course_App.repository.IUserRepository;
 import com.example.Learning_Course_App.service.ILessonService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Service
 public class LessonServiceImpl implements ILessonService {
     private final ILessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
+    private final IUserRepository userRepository;
+    private final IProgressRepository progressRepository;
 
-    public LessonServiceImpl(ILessonRepository lessonRepository, LessonMapper lessonMapper) {
+    public LessonServiceImpl(ILessonRepository lessonRepository, LessonMapper lessonMapper, IUserRepository userRepository, IProgressRepository progressRepository) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
+        this.userRepository = userRepository;
+        this.progressRepository = progressRepository;
     }
 
     public Page<LessonResponse> getLessonsByCourse(Long courseId, Long userId, int page, int size) {
@@ -43,5 +56,27 @@ public class LessonServiceImpl implements ILessonService {
 
             return lessonMapper.toDTO(lesson, status);
         });
+    }
+
+    @Override
+    @Transactional
+    public void updateProgress(Long lessonId, Long userId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+        User student = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        // Kiểm tra nếu đã có Progress thì cập nhật, nếu chưa thì tạo mới
+        Progress progress = progressRepository.findByLessonAndStudent(lesson, student)
+                .orElseGet(() -> {
+                    Progress newProgress = new Progress();
+                    newProgress.setLesson(lesson);
+                    newProgress.setStudent(student);
+                    return newProgress;
+                });
+        progress.setStatus(LessonStatus.UNLOCKED);
+        progress.setCreatedAt(new Date()); // Gán ngày tạo
+        progressRepository.save(progress);
     }
 }

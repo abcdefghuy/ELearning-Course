@@ -16,8 +16,8 @@ import java.util.List;
 
 @Repository
 public interface ICourseRepository extends JpaRepository<Course, Long> {
-    @Query("SELECT c FROM Course c JOIN c.categories cat WHERE cat.id = :categoryId")
-    Page<Course> findByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+    @Query("SELECT c FROM Course c JOIN c.categories cat WHERE cat.category.categoryName like %:categoryName%")
+    Page<Course> findByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
     @Query("SELECT c FROM Course c WHERE c.details.createdAt >= :sevenDaysAgo ORDER BY c.details.createdAt DESC")
     List<Course> findTop10ByCreatedAt(LocalDate sevenDaysAgo, Pageable pageable);
     @Query("SELECT c FROM Course c where c.details.isBestSeller = true")
@@ -61,4 +61,8 @@ public interface ICourseRepository extends JpaRepository<Course, Long> {
                                      @Param("studentId") Long studentId,
                                      @Param("completedStatus") LessonStatus completedStatus,
                                      @Param("courseStatus") Status courseStatus);
+
+    @Query("SELECT c FROM Course c " +
+            "WHERE c.courseName LIKE %:keyword%")
+    Page<Course> findCourseByKeyWord(String keyword, Pageable pageable);
 }

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface IBookmarkService {
     Page<CourseResponse> getBookmarksByUserId(Long userId, Pageable pageable);
 
-    void addBookmark(@Valid BookmarkRequest request);
+    void addBookmark(@Valid BookmarkRequest request, Long userId);
 
-    void deleteBookmark(Long bookmarkId);
+    void removeBookmark(Long userId, Long courseId);
 }

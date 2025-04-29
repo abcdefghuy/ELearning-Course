@@ -56,4 +56,21 @@ public class RedisService {
             throw new ApiException(ErrorCode.REDIS_ERROR);
         }
     }
+    public <T> void save(String key, T value, long expirationMinutes) {
+        try {
+            String json = objectMapper.writeValueAsString(value);
+            save(key, json, expirationMinutes);
+        } catch (JsonProcessingException e) {
+            throw new ApiException(ErrorCode.REDIS_ERROR);
+        }
+    }
+    public <T> T get(String key, Class<T> clazz) {
+        try {
+            String json = get(key);
+            if (json == null) return null;
+            return objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            throw new ApiException(ErrorCode.REDIS_ERROR);
+        }
+    }
 }

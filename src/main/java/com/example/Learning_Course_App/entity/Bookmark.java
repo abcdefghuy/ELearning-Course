@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "bookmark")
@@ -18,14 +19,12 @@ public class Bookmark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    @JsonIgnore
-    private Course course;
+    @OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookmarkedCourse> bookmarkedCourses;
     @Column(name = "created_at")
     private LocalDate createdAt;
 }

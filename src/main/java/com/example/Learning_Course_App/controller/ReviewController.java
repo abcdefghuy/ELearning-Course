@@ -37,7 +37,7 @@ public class ReviewController {
                 reviews.getTotalPages(),
                 reviews.isLast()
         );
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(ErrorCode.SUCCESS, response));
     }
     @PostMapping()
     public ResponseEntity<?> createReview(@RequestBody @Valid ReviewRequest reviewRequest) {

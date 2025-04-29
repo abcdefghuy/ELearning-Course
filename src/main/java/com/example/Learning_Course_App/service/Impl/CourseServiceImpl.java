@@ -3,7 +3,6 @@ package com.example.Learning_Course_App.service.Impl;
 import com.example.Learning_Course_App.dto.response.ContinueCourseResponse;
 import com.example.Learning_Course_App.dto.response.CourseDetailResponse;
 import com.example.Learning_Course_App.dto.response.CourseResponse;
-import com.example.Learning_Course_App.dto.response.LessonResponse;
 import com.example.Learning_Course_App.entity.Category;
 import com.example.Learning_Course_App.entity.Course;
 import com.example.Learning_Course_App.enumeration.LessonStatus;
@@ -11,8 +10,7 @@ import com.example.Learning_Course_App.enumeration.Status;
 import com.example.Learning_Course_App.mapper.ContinueCourseMapper;
 import com.example.Learning_Course_App.mapper.CourseDetailMapper;
 import com.example.Learning_Course_App.mapper.CourseMapper;
-import com.example.Learning_Course_App.mapper.LessonMapper;
-import com.example.Learning_Course_App.repository.IBookMarkRepository;
+import com.example.Learning_Course_App.repository.IBookmarkCourseRepository;
 import com.example.Learning_Course_App.repository.ICategoryRepository;
 import com.example.Learning_Course_App.repository.ICourseRepository;
 import com.example.Learning_Course_App.service.ICourseService;
@@ -29,14 +27,14 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements ICourseService {
     private final ICourseRepository courseRepository;
     private final CourseDetailMapper courseDetailMapper;
-    private final IBookMarkRepository bookmarkRepository;
+    private final IBookmarkCourseRepository bookmarkRepository;
     private final RedisService redisService;
     private final CourseMapper courseMapper;
     private final  CourseDetailMapper courseDetailResponseMapper;
     private final ContinueCourseMapper continueCourseMapper;
     private final ICategoryRepository categoryRepository;
 
-    public CourseServiceImpl(ICourseRepository courseRepository, CourseDetailMapper courseDetailMapper, IBookMarkRepository bookmarkRepository, RedisService redisService, CourseMapper courseMapper, CourseDetailMapper courseDetailResponseMapper, ContinueCourseMapper continueCourseMapper, ICategoryRepository categoryRepository) {
+    public CourseServiceImpl(ICourseRepository courseRepository, CourseDetailMapper courseDetailMapper, IBookmarkCourseRepository bookmarkRepository, RedisService redisService, CourseMapper courseMapper, CourseDetailMapper courseDetailResponseMapper, ContinueCourseMapper continueCourseMapper, ICategoryRepository categoryRepository) {
         this.courseRepository = courseRepository;
         this.courseDetailMapper = courseDetailMapper;
         this.bookmarkRepository = bookmarkRepository;
@@ -46,15 +44,15 @@ public class CourseServiceImpl implements ICourseService {
         this.continueCourseMapper = continueCourseMapper;
         this.categoryRepository = categoryRepository;
     }
-    @Override
-    public Page<CourseResponse> getCourseByCategory(Long categoryId, int page, int size, Long userId) {
+
+    public Page<CourseResponse> getCourseByCategory(String categoryName, int page, int size, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Course> listCourses = courseRepository.findByCategoryId(categoryId,pageable);
-        List<CourseResponse> coursesDTO = listCourses.getContent().stream()
-                .map(courseMapper::toDTO)
-                .toList();
-        List<CourseResponse> dto = markBookmarked(coursesDTO, userId);
-        return new PageImpl<>(dto, pageable, listCourses.getTotalElements());
+        Page<Course> listCourses = courseRepository.findByCategoryName(categoryName, pageable);
+
+        // Chuyển đổi dữ liệu thành CourseResponse và đánh dấu bookmark
+        List<CourseResponse> courseDTOs = ProcessBookmark(userId, listCourses);
+
+        return new PageImpl<>(courseDTOs, pageable, listCourses.getTotalElements());
     }
 
     @Override
@@ -69,39 +67,30 @@ public class CourseServiceImpl implements ICourseService {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Course> topCourses = courseRepository.findTop10BestSellers(pageable);
 
-        // map và đánh dấu bookmark
-        List<CourseResponse> courseDTOs = topCourses.getContent().stream()
-                .map(courseMapper::toDTO)
-                .collect(Collectors.toList());
-        List<CourseResponse> dto = markBookmarked(courseDTOs, userId);
+        List<CourseResponse> courseDTOs = ProcessBookmark(userId, topCourses);
 
-        redisService.saveList("top10_course", dto, 10);
+        redisService.saveList("top10_course", courseDTOs, 10);
 
         // Trả về 1 Page thủ công
-        return new PageImpl<>(dto, pageable, topCourses.getTotalElements());
+        return new PageImpl<>(courseDTOs, pageable, topCourses.getTotalElements());
     }
-
-    private List<CourseResponse> markBookmarked(List<CourseResponse> courses, Long userId) {
-        if (userId == null) {
-            // Guest thì không cần đánh dấu bookmarked
-            for (CourseResponse dto : courses) {
-                dto.setBookmarked(false); // hoặc không set cũng được
-            }
-            return courses;
+    @Override
+    public Page<CourseResponse> getAllCourses(PageRequest of, Long userId) {
+        redisService.delete("all_course");
+        // Kiểm tra cache
+        List<CourseResponse> cachedCourses = redisService.getList("all_course", CourseResponse.class);
+        if (cachedCourses != null && !cachedCourses.isEmpty()) {
+            return paginateCourse(cachedCourses, of.getPageNumber(), of.getPageSize());
         }
 
-        List<Long> courseIds = courses.stream()
-                .map(CourseResponse::getCourseId)
-                .collect(Collectors.toList());
+        // Nếu không có dữ liệu trong cache, truy vấn cơ sở dữ liệu
+        Page<Course> coursePage = courseRepository.findAll(of);
+        List<CourseResponse> courseDTOs = ProcessBookmark(userId, coursePage);
 
-        List<Long> bookmarkedCourseIds = bookmarkRepository
-                .findBookmarkedCourseIdsByUserIdAndCourseIds(userId, courseIds);
+        // Cập nhật cache sau khi truy vấn thành công
+        redisService.saveList("all_course", courseDTOs, 10);
 
-        for (CourseResponse dto : courses) {
-            dto.setBookmarked(bookmarkedCourseIds.contains(dto.getCourseId()));
-        }
-
-        return courses;
+        return new PageImpl<>(courseDTOs, of, coursePage.getTotalElements());
     }
 
     private Page<CourseResponse> paginateCourse(List<CourseResponse> cachedCourses, int page, int size) {
@@ -121,21 +110,9 @@ public class CourseServiceImpl implements ICourseService {
         return null;
     }
 
-    @Override
-    public Page<CourseResponse> getAllCourses(PageRequest of, Long userId) {
-        redisService.delete("all_course");
-        // kiểm tra cache
-        List<CourseResponse> cachedCourses = redisService.getList("all_course", CourseResponse.class);
-        if (cachedCourses != null && !cachedCourses.isEmpty()) {
-            return paginateCourse(cachedCourses, of.getPageNumber() , of.getPageSize());
-        }
-        Page<Course> coursePage = courseRepository.findAll(of);
-        List<CourseResponse> courseDTOs = coursePage.getContent().stream()
-                .map(courseMapper::toDTO)
-                .collect(Collectors.toList());
-        List<CourseResponse> dto = markBookmarked(courseDTOs, userId);
-        redisService.saveList("all_course", dto, 10);
-        return new PageImpl<>(dto, of, coursePage.getTotalElements());
+
+    private List<Long> getBookmarkedCourseIds(Long userId, List<Long> courseIds) {
+        return bookmarkRepository.findBookmarkedCourseIds(userId, courseIds);
     }
 
     public  CourseDetailResponse getDetailCourse(Long courseId, Long userId) {
@@ -195,6 +172,26 @@ public class CourseServiceImpl implements ICourseService {
                 .toList();
         redisService.saveList("completed_course_user:"+ userId, courseDTOs, 10);
         return new PageImpl<>(courseDTOs, of, coursePage.getTotalElements());
+    }
+
+    @Override
+    public Page<CourseResponse> getCourseSearch(Long userId,String keyword, PageRequest of) {
+        Page<Course> coursePages = courseRepository.findCourseByKeyWord(keyword ,of);
+        List<CourseResponse> courseDTOs = ProcessBookmark(userId, coursePages);
+        return new PageImpl<>(courseDTOs, of, coursePages.getTotalElements());
+    }
+
+    private List<CourseResponse> ProcessBookmark(Long userId, Page<Course> coursePages) {
+        List<Long> ids = coursePages.getContent().stream()
+                .map(Course::getId)
+                .collect(Collectors.toList());
+
+        List<Long> bookmarkedCourseId = getBookmarkedCourseIds(userId, ids);
+
+        List<CourseResponse> courseDTOs = coursePages.getContent().stream()
+                .map(course -> courseMapper.toDTO(course, bookmarkedCourseId.contains(course.getId())))
+                .collect(Collectors.toList());
+        return courseDTOs;
     }
 
     private int getCourseProgress(Long userId, Long courseId, Status status) {
