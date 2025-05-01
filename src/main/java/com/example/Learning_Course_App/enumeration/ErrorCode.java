@@ -50,6 +50,9 @@ public enum ErrorCode {
     INVALID_REQUEST(4012, "User ID and Course ID are required"),
     BOOKMARK_NOT_FOUND(4013, "Bookmark not found"),
     REVIEW_NOT_FOUND(4014, "Review not found"),
+    ORDER_NOT_FOUND(4015, "Payment order not found"),
+    INVALID_SIGNATURE(4016, "Invalid secure hash signature from VNPay"),
+
 
 
     // Server Errors (5xxx)
