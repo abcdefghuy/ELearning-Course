@@ -28,11 +28,7 @@ public class PaymentController {
     @GetMapping("/vnpay-callback")
     public RedirectView vnpayCallback(HttpServletRequest request) {
         PaymentStatus status = paymentService.handleVNPayCallback(request);
-        System.out.println(">> VNPay Callback: status = " + status);
-
         String redirectUrl = "myapp://payment-result?status=" + status.name().toLowerCase();
-        System.out.println(">> Redirecting to: " + redirectUrl);
         return new RedirectView(redirectUrl);
     }
-
 }
