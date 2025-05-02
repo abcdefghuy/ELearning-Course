@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/payment/vnpay-callback").permitAll()
                         .requestMatchers("/api/**").hasRole("STUDENT")
                         .anyRequest().authenticated()
                 )

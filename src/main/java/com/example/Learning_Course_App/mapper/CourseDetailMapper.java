@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class CourseDetailMapper {
-    public CourseDetailResponse toDTO(Course course) {
+    public CourseDetailResponse toDTO(Course course, boolean isEnrolled) {
         return CourseDetailResponse.builder()
                 .courseId(course.getId())
                 .courseName(course.getCourseName())
@@ -31,6 +31,7 @@ public class CourseDetailMapper {
                 .lessonCount(course.getLessons().size())
                 .isBestSeller(course.getDetails().isBestSeller())
                 .studentQuantity(course.getEnrollments().size())
+                .isEnrolled(isEnrolled)
                 .build();
     }
 }

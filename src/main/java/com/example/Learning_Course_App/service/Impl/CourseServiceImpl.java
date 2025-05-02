@@ -120,7 +120,14 @@ public class CourseServiceImpl implements ICourseService {
         if (course == null) {
             return null;
         }
-        return courseDetailMapper.toDTO(course);
+        boolean isEnrolled = false;
+        if (userId != null) {
+            isEnrolled = course.getEnrollments()
+                    .stream()
+                    .anyMatch(e -> e.getUser().getId().equals(userId));
+        }
+
+        return courseDetailMapper.toDTO(course, isEnrolled);
     }
 
     @Override

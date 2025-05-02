@@ -28,4 +28,5 @@ public class CourseDetailResponse {
     private List<String> categoryNames;
     private boolean isBestSeller;
     private boolean isBookmarked;
+    private boolean isEnrolled;
 }
