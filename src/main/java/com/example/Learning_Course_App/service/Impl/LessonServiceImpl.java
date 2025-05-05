@@ -67,7 +67,19 @@ public class LessonServiceImpl implements ILessonService {
         User student = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        // Kiểm tra nếu đã có Progress thì cập nhật, nếu chưa thì tạo mới
+        // Tìm bài học tiếp theo
+        Lesson nextLesson = lessonRepository.findTopByLessonOrderGreaterThan(lesson.getLessonOrder())
+                .orElseThrow(() -> new RuntimeException("Next lesson not found"));
+
+        // Cập nhật progress cho bài học hiện tại
+        createOrUpdateProgress(lesson, student);
+
+        // Cập nhật progress cho bài học tiếp theo nếu chưa có
+        createOrUpdateProgress(nextLesson, student);
+    }
+
+    private void createOrUpdateProgress(Lesson lesson, User student) {
+        // Kiểm tra và tạo mới hoặc cập nhật Progress
         Progress progress = progressRepository.findByLessonAndStudent(lesson, student)
                 .orElseGet(() -> {
                     Progress newProgress = new Progress();
@@ -75,6 +87,7 @@ public class LessonServiceImpl implements ILessonService {
                     newProgress.setStudent(student);
                     return newProgress;
                 });
+
         progress.setStatus(LessonStatus.UNLOCKED);
         progress.setCreatedAt(new Date()); // Gán ngày tạo
         progressRepository.save(progress);

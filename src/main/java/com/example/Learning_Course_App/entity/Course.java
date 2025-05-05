@@ -45,4 +45,6 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Review> reviews;
+    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
+    private Mentor mentor;
 }

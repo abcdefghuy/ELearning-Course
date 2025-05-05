@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements IReviewService {
 
         Course course = courseRepository.findById(reviewRequest.getCourseId())
                 .orElseThrow(() -> new ApiException(ErrorCode.COURSE_NOT_FOUND));
-
+        reviewRequest.setUpdateAt(new java.util.Date());
         Review review = reviewMapper.toEntity(reviewRequest, user, course);
         reviewRepository.save(review);
     }
@@ -62,8 +62,8 @@ public class ReviewServiceImpl implements IReviewService {
     public void updateReview(Long reviewId, ReviewRequest reviewRequest) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ApiException(ErrorCode.REVIEW_NOT_FOUND));
-        review.setRating(reviewRequest.getRating());
-        review.setFeedback(reviewRequest.getFeedback());
+        review.setRating(reviewRequest.getReviewScore());
+        review.setFeedback(reviewRequest.getReviewContent());
         review.setUpdate_at(reviewRequest.getUpdateAt());
         reviewRepository.save(review);
     }
