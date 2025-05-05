@@ -17,17 +17,15 @@ public class ReviewRequest {
     @NotNull(message = "Rating is required")
     @Min(value = 1, message = "Rating must be between 1 and 5")
     @Max(value = 5, message = "Rating must be between 1 and 5")
-    private int rating;
+    private int reviewScore;
 
     @NotBlank(message = "Feedback is required")
-    private String feedback;
+    private String reviewContent;
 
-    @NotNull(message = "Update date is required")
     private Date updateAt;
 
     @NotNull(message = "Course ID is required")
     private Long courseId;
 
-    @NotNull(message = "User ID is required")
     private Long userId;
 }

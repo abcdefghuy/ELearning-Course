@@ -25,8 +25,8 @@ public class ReviewMapper {
 
     public Review toEntity(ReviewRequest reviewRequest, User user, Course course) {
         Review review = new Review();
-        review.setRating(reviewRequest.getRating());
-        review.setFeedback(reviewRequest.getFeedback());
+        review.setRating(reviewRequest.getReviewScore());
+        review.setFeedback(reviewRequest.getReviewContent());
         review.setUpdate_at(reviewRequest.getUpdateAt());
         review.setUser(user);
         review.setCourse(course);

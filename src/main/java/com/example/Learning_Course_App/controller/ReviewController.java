@@ -5,6 +5,7 @@ import com.example.Learning_Course_App.dto.request.ReviewRequest;
 import com.example.Learning_Course_App.dto.response.ApiResponse;
 import com.example.Learning_Course_App.dto.response.PagedResponse;
 import com.example.Learning_Course_App.dto.response.ReviewResponse;
+import com.example.Learning_Course_App.entity.User;
 import com.example.Learning_Course_App.enumeration.ErrorCode;
 import com.example.Learning_Course_App.service.IReviewService;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,8 +42,10 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success(ErrorCode.SUCCESS, response));
     }
     @PostMapping()
-    public ResponseEntity<?> createReview(@RequestBody @Valid ReviewRequest reviewRequest) {
+    public ResponseEntity<?> createReview(@RequestBody @Valid ReviewRequest reviewRequest, @AuthenticationPrincipal User user) {
         try {
+            Long userId = user != null ? user.getId() : null;
+            reviewRequest.setUserId(userId);
             reviewService.addReview(reviewRequest);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(ErrorCode.REVIEW_ADDED_SUCCESSFULLY, null));

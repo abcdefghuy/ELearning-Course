@@ -18,4 +18,6 @@ public class CourseResponse {
     private boolean isBookmarked;
     private Double rating;
     private boolean isBestSeller;
+    private String mentorName;
+    private String mentorAvatar;
 }
