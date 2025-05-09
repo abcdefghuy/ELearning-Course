@@ -18,4 +18,5 @@ public class LessonResponse {
     private int duration;
     private String lessonVideoUrl;
     private int lessonOrder;
+    private boolean isHasQuiz;
 }

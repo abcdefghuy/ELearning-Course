@@ -44,7 +44,21 @@ public class LessonController {
         catch (Exception e) {
             return ResponseEntity.status(500).body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
         }
-
+    }
+    @GetMapping("/{courseId}/demo")
+    public ResponseEntity<?> getLessonsByCourseDemo(@PathVariable Long courseId,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size) {
+        Page<LessonResponse> lessons = lessonService.getLessonsDemoByCourse(courseId, null, page, size);
+        PagedResponse<LessonResponse> response = new PagedResponse<>(
+                lessons.getContent(),
+                lessons.getNumber(),
+                lessons.getSize(),
+                lessons.getTotalElements(),
+                lessons.getTotalPages(),
+                lessons.isLast()
+        );
+        return ResponseEntity.ok(ApiResponse.success(ErrorCode.SUCCESS, response));
     }
 
 }
