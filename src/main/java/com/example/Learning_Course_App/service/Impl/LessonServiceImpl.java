@@ -40,10 +40,8 @@ public class LessonServiceImpl implements ILessonService {
     public Page<LessonResponse> getLessonsByCourse(Long courseId, Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.ASC, "lessonOrder"));
         Page<Lesson> lessons = lessonRepository.findByCourseIdOrderByLectureOrderAsc(courseId, pageable);
-
         return lessons.map(lesson -> {
             String status;
-
             if (userId == null) {
                 status = lesson.getLessonOrder() == 1 ? "UNLOCKED" : "LOCKED";
             } else {
@@ -53,10 +51,26 @@ public class LessonServiceImpl implements ILessonService {
                         .map(p -> p.getStatus().toString())
                         .orElse("LOCKED");
             }
-
+            LessonResponse dto = lessonMapper.toDTO(lesson, status);
+            System.out.println("Lesson " + lesson.getId() + " | hasQuiz: " + dto.isHasQuiz()); // debug tại đây
+            return dto;
+        });
+    }
+    public Page<LessonResponse> getLessonsDemoByCourse(Long courseId, Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.ASC, "lessonOrder"));
+        Page<Lesson> lessons = lessonRepository.findByCourseIdOrderByLectureOrderAsc(courseId, pageable);
+        return lessons.map(lesson -> {
+            String status;
+            if (lesson.getLessonOrder() == 1) {
+                status = "UNLOCKED";
+            }
+            else {
+                status = "LOCKED";
+            }
             return lessonMapper.toDTO(lesson, status);
         });
     }
+
 
     @Override
     @Transactional

@@ -18,6 +18,7 @@ public class LessonMapper {
                 .status(status)
                 .lessonOrder(lesson.getLessonOrder())
                 .courseId(lesson.getCourse().getId())
+                .isHasQuiz(lesson.getQuizQuestions() != null && !lesson.getQuizQuestions().isEmpty())
                 .build();
     }
 }
