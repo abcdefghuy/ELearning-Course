@@ -21,6 +21,7 @@ public class CourseDetail {
     private String courseImg;
     @Column(name = "course_price", nullable = false)
     private double coursePrice;
+    @Lob
     @Column(name = "course_description", nullable = false)
     private String courseDescription;
     @Column(name = "level", nullable = false)
