@@ -19,7 +19,7 @@ public class Lesson {
     private Long id;
     @Column(name = "lesson_title", nullable = false)
     private String lessonTitle;
-    @Column(name = "lesson_description", nullable = false)
+    @Column(name = "lesson_description", nullable = false, columnDefinition = "TEXT")
     private String description;
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt = new Date();
