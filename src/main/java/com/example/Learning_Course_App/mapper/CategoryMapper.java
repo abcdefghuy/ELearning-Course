@@ -10,6 +10,7 @@ public class CategoryMapper {
         return CategoryResponse.builder()
                 .categoryId(category.getCategoryId())
                 .categoryName(category.getCategoryName())
+                .categoryImageUrl(category.getCategoryImageUrl())
                 .build();
     }
 }

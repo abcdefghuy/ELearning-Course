@@ -18,6 +18,8 @@ public class Category {
     private long categoryId;
     @Column(name = "category_name")
     private String categoryName;
+    @Column(name = "category_image_url")
+    private String categoryImageUrl;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseCategory> courseCategories;

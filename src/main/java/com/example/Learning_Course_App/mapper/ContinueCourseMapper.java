@@ -13,6 +13,7 @@ public class ContinueCourseMapper {
                 .categoryName(Category)
                 .courseImageUrl(course.getDetails().getCourseImg())
                 .progress(progress)
+                .mentorName(course.getMentor().getMentorName())
                 .build();
     }
 }

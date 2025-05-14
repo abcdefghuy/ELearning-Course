@@ -9,4 +9,5 @@ import lombok.*;
 public class CategoryResponse {
     private long categoryId;
     private String categoryName;
+    private String categoryImageUrl;
 }
