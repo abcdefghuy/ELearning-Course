@@ -14,5 +14,6 @@ public class ContinueCourseResponse {
     private String courseTitle;
     private String categoryName;
     private String courseImageUrl;
+    private String mentorName;
     private int progress;
 }
