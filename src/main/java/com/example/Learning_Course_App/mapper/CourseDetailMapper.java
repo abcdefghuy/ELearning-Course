@@ -5,6 +5,7 @@ import com.example.Learning_Course_App.dto.response.LessonResponse;
 import com.example.Learning_Course_App.dto.response.ReviewResponse;
 import com.example.Learning_Course_App.entity.Course;
 import com.example.Learning_Course_App.entity.CourseDetail;
+import com.example.Learning_Course_App.entity.Lesson;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,9 @@ public class CourseDetailMapper {
                 .isBestSeller(course.getDetails().isBestSeller())
                 .studentQuantity(course.getEnrollments().size())
                 .isEnrolled(isEnrolled)
+                .duration(course.getLessons().stream()
+                        .mapToInt(Lesson::getDuration)
+                        .sum())
                 .build();
     }
 }

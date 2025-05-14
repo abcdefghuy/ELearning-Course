@@ -39,7 +39,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserDetailResponse getUserInfo(Long userId) {
-        redisService.delete("user_" + userId);
         String cacheKey = "user_" + userId;
         if (redisService.exists(cacheKey)) {
             UserDetailResponse cachedUser = redisService.get(cacheKey, UserDetailResponse.class);

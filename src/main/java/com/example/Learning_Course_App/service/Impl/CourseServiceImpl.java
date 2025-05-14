@@ -60,6 +60,7 @@ public class CourseServiceImpl implements ICourseService {
         redisService.delete("top10_course");
         // kiểm tra cache
         List<CourseResponse> cachedCourses = redisService.getList("top10_course", CourseResponse.class);
+
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
             return paginateCourse(cachedCourses,0, 10); // nếu cached toàn bộ thì dùng hàm này
         }
@@ -76,7 +77,6 @@ public class CourseServiceImpl implements ICourseService {
     }
     @Override
     public Page<CourseResponse> getAllCourses(PageRequest of, Long userId) {
-        redisService.delete("all_course");
         // Kiểm tra cache
         List<CourseResponse> cachedCourses = redisService.getList("all_course", CourseResponse.class);
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
@@ -145,7 +145,6 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public Page<ContinueCourseResponse> getAllContinueCourses(Long userId, PageRequest of) {
-        redisService.delete("continue_course_user:" + userId);
         List<ContinueCourseResponse> cachedCourses = redisService.getList("continue_course_user:"+ userId, ContinueCourseResponse.class);
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
             return paginateContinueCourse(cachedCourses, of.getPageNumber(), of.getPageSize());
@@ -164,7 +163,6 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public Page<ContinueCourseResponse> getAllContinueCoursesCompleted(Long userId, PageRequest of) {
-        redisService.delete("completed_course_user:" + userId);
         List<ContinueCourseResponse> cachedCourses = redisService.getList("completed_course_user:" + userId, ContinueCourseResponse.class);
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
            return paginateContinueCourse(cachedCourses, of.getPageNumber(), of.getPageSize());

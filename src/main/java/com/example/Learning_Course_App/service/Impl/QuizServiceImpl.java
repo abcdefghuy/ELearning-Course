@@ -21,7 +21,6 @@ public class QuizServiceImpl implements IQuizService {
     }
     @Override
     public List<QuizQuestionResponse> getQuizByLessonId(Long lessonId) {
-        redisService.delete("quiz_" + lessonId);
         String redisKey = "quiz_" + lessonId;
         List<QuizQuestionResponse> quizQuestions = redisService.getList(redisKey, QuizQuestionResponse.class);
         if (quizQuestions == null) {
