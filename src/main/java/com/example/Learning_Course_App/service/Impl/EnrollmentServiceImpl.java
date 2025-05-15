@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnrollmentServiceImpl implements IEnrollmentService {
     private final IEnrollmentRepository repository;
+    private final RedisService redisService;
 
     @Autowired
-    public EnrollmentServiceImpl(IEnrollmentRepository repository) {
+    public EnrollmentServiceImpl(IEnrollmentRepository repository, RedisService redisService) {
         this.repository = repository;
+        this.redisService = redisService;
     }
 
     @Override

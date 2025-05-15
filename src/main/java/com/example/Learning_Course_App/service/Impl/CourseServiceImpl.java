@@ -145,6 +145,7 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public Page<ContinueCourseResponse> getAllContinueCourses(Long userId, PageRequest of) {
+        redisService.delete("continue_course_user:" + userId);
         List<ContinueCourseResponse> cachedCourses = redisService.getList("continue_course_user:"+ userId, ContinueCourseResponse.class);
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
             return paginateContinueCourse(cachedCourses, of.getPageNumber(), of.getPageSize());
@@ -163,6 +164,7 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public Page<ContinueCourseResponse> getAllContinueCoursesCompleted(Long userId, PageRequest of) {
+        redisService.delete("completed_course_user:" + userId);
         List<ContinueCourseResponse> cachedCourses = redisService.getList("completed_course_user:" + userId, ContinueCourseResponse.class);
         if (cachedCourses != null && !cachedCourses.isEmpty()) {
            return paginateContinueCourse(cachedCourses, of.getPageNumber(), of.getPageSize());
