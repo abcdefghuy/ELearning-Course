@@ -52,7 +52,6 @@ public class LessonServiceImpl implements ILessonService {
                         .orElse("LOCKED");
             }
             LessonResponse dto = lessonMapper.toDTO(lesson, status);
-            System.out.println("Lesson " + lesson.getId() + " | hasQuiz: " + dto.isHasQuiz()); // debug tại đây
             return dto;
         });
     }
