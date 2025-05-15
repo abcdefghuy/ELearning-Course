@@ -15,6 +15,10 @@ import java.util.Optional;
 public interface ILessonRepository extends JpaRepository<Lesson, Long> {
     @Query("SELECT l FROM Lesson l WHERE l.course.id = :courseId ORDER BY l.lessonOrder ASC")
     Page<Lesson> findByCourseIdOrderByLectureOrderAsc(@Param("courseId") Long courseId, Pageable pageable);
+    @Query("SELECT l FROM Lesson l WHERE l.course.id = :courseId AND l.lessonOrder > :lessonOrder ORDER BY l.lessonOrder ASC")
+    Optional<Lesson> findFirstByCourseIdAndLessonOrderGreaterThan(@Param("courseId") int courseId,
+                                                                  @Param("lessonOrder") Long lessonOrder);
+    List<Lesson> findAllByCourseIdOrderByLessonOrderAsc(Long courseId);
     @Query("SELECT l FROM Lesson l WHERE l.course.id = :courseId AND l.lessonOrder = :lessonOrder")
     Optional<Lesson> findFirstByCourseIdAndLessonOrderGreaterThan(@Param("courseId") Long courseId,
                                                                   @Param("lessonOrder") int lessonOrder);
