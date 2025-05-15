@@ -1,15 +1,14 @@
 package com.example.Learning_Course_App.service.Impl;
 
 import com.example.Learning_Course_App.dto.response.LessonResponse;
+import com.example.Learning_Course_App.entity.Enrollment;
 import com.example.Learning_Course_App.entity.Lesson;
 import com.example.Learning_Course_App.entity.Progress;
 import com.example.Learning_Course_App.entity.User;
 import com.example.Learning_Course_App.enumeration.LessonStatus;
+import com.example.Learning_Course_App.enumeration.Status;
 import com.example.Learning_Course_App.mapper.LessonMapper;
-import com.example.Learning_Course_App.repository.ICourseRepository;
-import com.example.Learning_Course_App.repository.ILessonRepository;
-import com.example.Learning_Course_App.repository.IProgressRepository;
-import com.example.Learning_Course_App.repository.IUserRepository;
+import com.example.Learning_Course_App.repository.*;
 import com.example.Learning_Course_App.service.ILessonService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
@@ -29,12 +29,16 @@ public class LessonServiceImpl implements ILessonService {
     private final LessonMapper lessonMapper;
     private final IUserRepository userRepository;
     private final IProgressRepository progressRepository;
+    private final IEnrollmentRepository enrollmentRepository;
+    private final RedisService redisService;
 
-    public LessonServiceImpl(ILessonRepository lessonRepository, LessonMapper lessonMapper, IUserRepository userRepository, IProgressRepository progressRepository) {
+    public LessonServiceImpl(ILessonRepository lessonRepository, LessonMapper lessonMapper, IUserRepository userRepository, IProgressRepository progressRepository, IEnrollmentRepository enrollmentRepository, RedisService redisService) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
         this.userRepository = userRepository;
         this.progressRepository = progressRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.redisService = redisService;
     }
 
     public Page<LessonResponse> getLessonsByCourse(Long courseId, Long userId, int page, int size) {
@@ -80,15 +84,34 @@ public class LessonServiceImpl implements ILessonService {
         User student = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        // Tìm bài học tiếp theo
-        Lesson nextLesson = lessonRepository.findFirstByCourseIdAndLessonOrderGreaterThan(lesson.getCourse().getId(), lesson.getLessonOrder() + 1)
-                .orElseThrow(() -> new RuntimeException("Next lesson not found"));
+        Lesson nextLesson = lessonRepository.findFirstByCourseIdAndLessonOrderGreaterThan(
+                        lesson.getCourse().getId(), lesson.getLessonOrder() + 1)
+                .orElse(null);  // nextLesson có thể không tồn tại
 
-        // Cập nhật progress cho bài học hiện tại
         createOrUpdateProgress(lesson, student);
 
-        // Cập nhật progress cho bài học tiếp theo nếu chưa có
-        createOrUpdateProgress(nextLesson, student);
+        if (nextLesson != null) {
+            createOrUpdateProgress(nextLesson, student);
+        }
+
+        checkAndCompleteEnrollmentIfNeeded(lesson.getCourse().getId(), student);
+    }
+
+    private void checkAndCompleteEnrollmentIfNeeded(Long courseId, User student) {
+        List<Lesson> allLessons = lessonRepository.findByCourseId(courseId);
+
+        boolean allUnlocked = allLessons.stream()
+                .allMatch(lesson -> progressRepository.existsByLessonAndStudentAndStatus(lesson, student, LessonStatus.UNLOCKED));
+
+        if (allUnlocked) {
+            Enrollment enrollment = enrollmentRepository.findByCourseIdAndUserId(courseId, student.getId())
+                    .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+
+            if (enrollment.getCourseStatus() != Status.COMPLETED) {
+                enrollment.setCourseStatus(Status.COMPLETED);
+                enrollmentRepository.save(enrollment);
+            }
+        }
     }
 
     private void createOrUpdateProgress(Lesson lesson, User student) {
