@@ -40,12 +40,12 @@ public class ProgressServiceImpl implements IProgressService {
     public void initLessonProgress(User student, Course course) {
         List<Lesson> lessons = lessonRepository.findByCourseId(course.getId());
         List<Progress> progressList = new ArrayList<>();
-        for (int i = 0; i < lessons.size(); i++) {
+        for (Lesson lesson : lessons) {
             Progress progress = new Progress();
-            progress.setLesson(lessons.get(i));
+            progress.setLesson(lesson);
             progress.setStudent(student);
             progress.setCreatedAt(new Date());
-            if (lessons.get(i).getLessonOrder()==1) {
+            if (lesson.getLessonOrder() == 1) {
                 progress.setStatus(LessonStatus.UNLOCKED); // Bài học đầu tiên được mở khóa
             } else {
                 progress.setStatus(LessonStatus.LOCKED);   // Các bài sau bị khóa

@@ -81,7 +81,7 @@ public class LessonServiceImpl implements ILessonService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         // Tìm bài học tiếp theo
-        Lesson nextLesson = lessonRepository.findFirstByCourseIdAndLessonOrderGreaterThan(lesson.getLessonOrder(), lesson.getCourse().getId())
+        Lesson nextLesson = lessonRepository.findFirstByCourseIdAndLessonOrderGreaterThan(lesson.getCourse().getId(), lesson.getLessonOrder() + 1)
                 .orElseThrow(() -> new RuntimeException("Next lesson not found"));
 
         // Cập nhật progress cho bài học hiện tại
