@@ -52,6 +52,7 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(4014, "Review not found"),
     ORDER_NOT_FOUND(4015, "Payment order not found"),
     INVALID_SIGNATURE(4016, "Invalid secure hash signature from VNPay"),
+    LESSON_NOT_FOUND(4017, "Lesson not found"),
 
 
 
