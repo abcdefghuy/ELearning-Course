@@ -142,7 +142,7 @@ public class VnPayServiceImpl implements IPaymentService {
                 enrollmentService.enrollUser(payment.getStudent(), payment.getCourse());
                 redisService.delete("continue_course_user:" + payment.getStudent().getId());
 
-                progressService.initFirstLessonProgress(payment.getStudent(), payment.getCourse());
+                progressService.initLessonProgress(payment.getStudent(), payment.getCourse());
             }
 
             return status;

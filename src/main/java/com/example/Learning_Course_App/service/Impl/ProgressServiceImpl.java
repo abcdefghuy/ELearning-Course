@@ -13,7 +13,9 @@ import com.example.Learning_Course_App.service.IProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +34,24 @@ public class ProgressServiceImpl implements IProgressService {
         progress.setCreatedAt(new Date());
 
         progressRepository.save(progress);
+    }
+
+    @Override
+    public void initLessonProgress(User student, Course course) {
+        List<Lesson> lessons = lessonRepository.findByCourseId(course.getId());
+        List<Progress> progressList = new ArrayList<>();
+        for (int i = 0; i < lessons.size(); i++) {
+            Progress progress = new Progress();
+            progress.setLesson(lessons.get(i));
+            progress.setStudent(student);
+            progress.setCreatedAt(new Date());
+            if (lessons.get(i).getLessonOrder()==1) {
+                progress.setStatus(LessonStatus.UNLOCKED); // Bài học đầu tiên được mở khóa
+            } else {
+                progress.setStatus(LessonStatus.LOCKED);   // Các bài sau bị khóa
+            }
+            progressList.add(progress);
+        }
+        progressRepository.saveAll(progressList);
     }
 }
