@@ -13,7 +13,9 @@ import com.example.Learning_Course_App.service.IProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,16 +23,35 @@ public class ProgressServiceImpl implements IProgressService {
     private final ILessonRepository lessonRepository;
     private final IProgressRepository progressRepository;
     @Override
-    public void initFirstLessonProgress(User student, Course course) {
-        Lesson firstLesson = lessonRepository.findFirstByCourseIdOrderByLessonOrderAsc(course.getId())
-                .orElseThrow(() -> new ApiException(ErrorCode.LESSON_NOT_FOUND));
+    public void initCourseProgress(User student, Course course) {
+        // Lấy tất cả lesson trong khóa học, sắp xếp theo thứ tự
+        List<Lesson> lessons = lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(course.getId());
 
-        Progress progress = new Progress();
-        progress.setLesson(firstLesson);
-        progress.setStudent(student);
-        progress.setStatus(LessonStatus.UNLOCKED);
-        progress.setCreatedAt(new Date());
+        if (lessons.isEmpty()) {
+            throw new ApiException(ErrorCode.LESSON_NOT_FOUND);
+        }
 
-        progressRepository.save(progress);
+        List<Progress> progressList = new ArrayList<>();
+        Date now = new Date();
+
+        for (int i = 0; i < lessons.size(); i++) {
+            Lesson lesson = lessons.get(i);
+
+            Progress progress = new Progress();
+            progress.setLesson(lesson);
+            progress.setStudent(student);
+            progress.setCreatedAt(now);
+
+            // Lesson đầu tiên được mở khóa
+            if (i == 0) {
+                progress.setStatus(LessonStatus.UNLOCKED);
+            } else {
+                progress.setStatus(LessonStatus.LOCKED);
+            }
+
+            progressList.add(progress);
+        }
+
+        progressRepository.saveAll(progressList);
     }
 }
