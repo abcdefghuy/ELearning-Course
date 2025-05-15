@@ -3,6 +3,7 @@ package com.example.Learning_Course_App.service.Impl;
 import com.example.Learning_Course_App.aop.ApiException;
 import com.example.Learning_Course_App.dto.request.PaymentRequest;
 import com.example.Learning_Course_App.entity.Course;
+import com.example.Learning_Course_App.entity.Lesson;
 import com.example.Learning_Course_App.entity.Payment;
 import com.example.Learning_Course_App.entity.User;
 import com.example.Learning_Course_App.enumeration.ErrorCode;
@@ -12,7 +13,9 @@ import com.example.Learning_Course_App.repository.ICourseRepository;
 import com.example.Learning_Course_App.repository.IPaymentRepository;
 import com.example.Learning_Course_App.repository.IUserRepository;
 import com.example.Learning_Course_App.service.IEnrollmentService;
+import com.example.Learning_Course_App.service.ILessonService;
 import com.example.Learning_Course_App.service.IPaymentService;
+import com.example.Learning_Course_App.service.IProgressService;
 import com.example.Learning_Course_App.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,8 @@ public class VnPayServiceImpl implements IPaymentService {
     private final IUserRepository userRepository;
     private final ICourseRepository courseRepository;
     private final IEnrollmentService enrollmentService;
+    private final IProgressService progressService;
+    private final RedisService redisService;
 
     @Override
     public String createPaymentUrl(PaymentRequest request, String ipAddress) {
@@ -104,6 +109,7 @@ public class VnPayServiceImpl implements IPaymentService {
         String txnRef = request.getParameter("vnp_TxnRef");
         String responseCode = request.getParameter("vnp_ResponseCode");
         String secureHash = request.getParameter("vnp_SecureHash");
+        String transactionNo = request.getParameter("vnp_TransactionNo");
 
         if (txnRef == null || responseCode == null || secureHash == null) {
             throw new ApiException(ErrorCode.INVALID_REQUEST);
@@ -129,10 +135,14 @@ public class VnPayServiceImpl implements IPaymentService {
 
             PaymentStatus status = "00".equals(responseCode) ? PaymentStatus.SUCCESS : PaymentStatus.FAILED;
             payment.setStatus(status);
+            payment.setTransactionNo(transactionNo);
             paymentRepository.save(payment);
 
             if (status == PaymentStatus.SUCCESS) {
                 enrollmentService.enrollUser(payment.getStudent(), payment.getCourse());
+                redisService.delete("continue_course_user:" + payment.getStudent().getId());
+
+                progressService.initFirstLessonProgress(payment.getStudent(), payment.getCourse());
             }
 
             return status;

@@ -97,7 +97,8 @@ public class AuthenticationService {
         User user = IUserRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
-        if (user.isEnabled()) {
+        // Chỉ chặn nếu đang xác thực ĐĂNG KÝ và đã xác thực rồi
+        if ("register".equals(input.getAction()) && user.isEnabled()) {
             throw new ApiException(ErrorCode.ACCOUNT_ALREADY_VERIFIED);
         }
 
@@ -112,7 +113,11 @@ public class AuthenticationService {
         }
 
         try {
-            user.setEnabled(true);
+            // Nếu là register thì enable account
+            if ("register".equals(input.getAction())) {
+                user.setEnabled(true);
+            }
+
             user.setUpdatedAt(LocalDateTime.now());
             IUserRepository.save(user);
             redisService.delete(input.getEmail());

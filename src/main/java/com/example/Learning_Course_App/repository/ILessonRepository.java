@@ -17,4 +17,5 @@ public interface ILessonRepository extends JpaRepository<Lesson, Long> {
     Page<Lesson> findByCourseIdOrderByLectureOrderAsc(@Param("courseId") Long courseId, Pageable pageable);
 
     Optional<Lesson> findTopByLessonOrderGreaterThan(int lessonOrder);
+    Optional<Lesson> findFirstByCourseIdOrderByLessonOrderAsc(Long courseId);
 }

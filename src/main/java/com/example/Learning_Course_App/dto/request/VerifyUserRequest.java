@@ -13,4 +13,6 @@ public class VerifyUserRequest {
 
     @Size(min = 6, max = 6, message = "INVALID_OTP_FORMAT")
     private String verificationCode;
+
+    private String action;
 }
