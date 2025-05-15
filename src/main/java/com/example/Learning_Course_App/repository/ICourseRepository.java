@@ -63,6 +63,6 @@ public interface ICourseRepository extends JpaRepository<Course, Long> {
                                      @Param("courseStatus") Status courseStatus);
 
     @Query("SELECT c FROM Course c " +
-            "WHERE c.courseName LIKE %:keyword%")
+            "WHERE c.courseName LIKE %:keyword% ")
     Page<Course> findCourseByKeyWord(String keyword, Pageable pageable);
 }
