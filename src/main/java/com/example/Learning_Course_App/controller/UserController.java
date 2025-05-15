@@ -22,13 +22,11 @@ public class UserController {
     }
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Void>> updateUserInfo(@RequestBody UserRequest userRequest, @AuthenticationPrincipal User user) {
-        System.out.println("API /me was called");  // Thêm log để kiểm tra xem API có được gọi không
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error(ErrorCode.USER_NOT_FOUND));
         }
         try {
-            System.out.println("asdasdsajd");
             Long userId = user.getId();
             userService.updateUserInfo(userRequest, userId);
             return ResponseEntity.ok(ApiResponse.success(ErrorCode.SUCCESS));

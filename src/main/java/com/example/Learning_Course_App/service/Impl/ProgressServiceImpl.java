@@ -54,4 +54,23 @@ public class ProgressServiceImpl implements IProgressService {
 
         progressRepository.saveAll(progressList);
     }
+
+    @Override
+    public void initLessonProgress(User student, Course course) {
+        List<Lesson> lessons = lessonRepository.findByCourseId(course.getId());
+        List<Progress> progressList = new ArrayList<>();
+        for (Lesson lesson : lessons) {
+            Progress progress = new Progress();
+            progress.setLesson(lesson);
+            progress.setStudent(student);
+            progress.setCreatedAt(new Date());
+            if (lesson.getLessonOrder() == 1) {
+                progress.setStatus(LessonStatus.UNLOCKED); // Bài học đầu tiên được mở khóa
+            } else {
+                progress.setStatus(LessonStatus.LOCKED);   // Các bài sau bị khóa
+            }
+            progressList.add(progress);
+        }
+        progressRepository.saveAll(progressList);
+    }
 }

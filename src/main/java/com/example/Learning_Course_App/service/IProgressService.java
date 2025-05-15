@@ -5,4 +5,5 @@ import com.example.Learning_Course_App.entity.User;
 
 public interface IProgressService {
     void initCourseProgress(User student, Course course);
+    void initLessonProgress(User student, Course course);
 }

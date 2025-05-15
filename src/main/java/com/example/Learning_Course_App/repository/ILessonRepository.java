@@ -19,4 +19,9 @@ public interface ILessonRepository extends JpaRepository<Lesson, Long> {
     Optional<Lesson> findFirstByCourseIdAndLessonOrderGreaterThan(@Param("courseId") int courseId,
                                                                   @Param("lessonOrder") Long lessonOrder);
     List<Lesson> findAllByCourseIdOrderByLessonOrderAsc(Long courseId);
+    @Query("SELECT l FROM Lesson l WHERE l.course.id = :courseId AND l.lessonOrder = :lessonOrder")
+    Optional<Lesson> findFirstByCourseIdAndLessonOrderGreaterThan(@Param("courseId") Long courseId,
+                                                                  @Param("lessonOrder") int lessonOrder);
+    Optional<Lesson> findFirstByCourseIdOrderByLessonOrderAsc(Long courseId);
+    List<Lesson> findByCourseId(long courseId);
 }
