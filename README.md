@@ -53,8 +53,7 @@ src/
 ├── aop/                # Exception handler
 ├── utils/              # Các hàm tiện ích: JWT, Email, VNPay...
 └── resources/
-    ├── application.properties    # Cấu hình đọc từ .env
-    └── db_elearning_course.sql   # File khởi tạo cơ sở dữ liệu
+    └── application.properties    # Cấu hình đọc từ .env
 ```
 
 ---
