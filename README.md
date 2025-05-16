@@ -1,23 +1,27 @@
 # 📚 ELearning-Course (Backend)
 
-**ELearning-Course** là hệ thống backend RESTful API hỗ trợ cho nền tảng học trực tuyến, được xây dựng bằng **Java Spring Boot**. Dự án hỗ trợ các tính năng học tập hiện đại như thanh toán VNPay, xác thực người dùng qua OTP và theo dõi tiến độ học tập.
+**ELearning-Course** là hệ thống backend RESTful API hỗ trợ cho nền tảng học trực tuyến, được xây dựng bằng **Java Spring Boot**. Dự án hỗ trợ các tính năng học tập hiện đại như quản lý khóa học, bài học, thanh toán VNPay, xác thực người dùng qua OTP và theo dõi tiến độ học tập.
 
 ---
 
-## 🚀 Tính năng nổi bật
+## 🚀 Tính năng dành cho người dùng
 
-- 🔐 **Xác thực & phân quyền người dùng**
-  - Đăng ký & đăng nhập (JWT)
-  - Gửi & xác minh mã OTP qua email
-- ⏳ **Theo dõi tiến độ học tập**
-  - Tự động khởi tạo tiến độ cho học viên
-  - Cập nhật trạng thái hoàn thành bài học
-- 💰 **Thanh toán khóa học qua VNPay**
-  - Tạo URL thanh toán
-  - Nhận callback kết quả thanh toán
-- ✉️ **Gửi email thông báo**
+### 👤 Quản lý người dùng
+  - Quản lý thông tin cá nhân
+  - Đăng ký / đăng nhập / quên mật khẩu (JWT + OTP)
+### 🎓 Học tập và tương tác
+  - Xem thông tin chi tiết khóa học
+  - Tìm kiếm khóa học
+  - Xem video bài giảng
+  - Đánh giá và bình luận khóa học
+  - Chức năng bookmark / yêu thích
+  - Trả lời câu hỏi bài tập sau video
+  - Cung cấp chứng chỉ hoàn thành khóa học
+### 💳 Thanh toán
+  - Tích hợp VNPay
+  - Xác minh callback thanh toán
+### ✉️ Gửi email hệ thống
   - Gửi OTP, xác nhận thanh toán, v.v.
-- 📊 **Quản lý & phân quyền admin/học viên**
 
 ---
 
@@ -49,7 +53,8 @@ src/
 ├── aop/                # Exception handler
 ├── utils/              # Các hàm tiện ích: JWT, Email, VNPay...
 └── resources/
-    └── application.properties    # Cấu hình đọc từ .env
+    ├── application.properties    # Cấu hình đọc từ .env
+    └── db_elearning_course.sql   # File khởi tạo cơ sở dữ liệu
 ```
 
 ---
@@ -110,17 +115,14 @@ REDIS_CLOUD_PORT=6379
 REDIS_CLOUD_PASSWORD=
 VNPAY_TMN_CODE=...
 VNPAY_SECRET_KEY=...
-VNPAY_RETURN_URL=http://localhost:8080/api/payment/vnpay-callback
+VNPAY_RETURN_URL=https://<public-domain>/api/payment/vnpay-callback  # ⚠️ Không dùng localhost, phải là URL công khai (vd: ngrok, Render...)
 ```
 
-3. Khởi tạo database bằng file `db_elearning_course.sql`
+3. Import file SQL `db_elearning_course.sql` vào MySQL để khởi tạo dữ liệu.
 
-4. Chạy ứng dụng:
-```bash
-./mvnw spring-boot:run
-```
+4. Mở dự án bằng **IntelliJ IDEA** > Nhấn **Run** hoặc dùng Gradle/Maven panel để chạy `Application.java`.
 
-5. Truy cập Swagger:
+5. Truy cập Swagger để test API:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
