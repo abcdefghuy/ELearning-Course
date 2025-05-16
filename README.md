@@ -53,7 +53,8 @@ src/
 ├── aop/                # Exception handler
 ├── utils/              # Các hàm tiện ích: JWT, Email, VNPay...
 └── resources/
-    └── application.properties    # Cấu hình đọc từ .env
+    ├── application.properties    # Cấu hình đọc từ .env
+    └── db_elearning_course.sql   # File khởi tạo cơ sở dữ liệu
 ```
 
 ---
@@ -103,7 +104,7 @@ cd ELearning-Course
 
 2. Cấu hình file `.env` chứa các biến môi trường như:
 ```env
-SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/elearning
+SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/elearning  # ⚠️ Khi deploy callback VNPay, backend cũng cần public (dùng Cloud DB nếu cần)
 SPRING_DATASOURCE_USERNAME=root
 SPRING_DATASOURCE_PASSWORD=yourpassword
 JWT_SECRET_KEY=your_secret_key
@@ -149,4 +150,6 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-> © 2025 - ELearning Team | Repo: [github.com/abcdefghuy/ELearning-Course](https://github.com/abcdefghuy/ELearning-Course)
+> 📦 Repo backend: [github.com/abcdefghuy/ELearning-Course](https://github.com/abcdefghuy/ELearning-Course)
+>  
+> 📦 Repo frontend: [github.com/lenhutanh/e-learning_course_app_front_end](https://github.com/lenhutanh/e-learning_course_app_front_end)
